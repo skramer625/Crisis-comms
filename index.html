@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIPP NJ Crisis Communications Drafter</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px}
+.header-inner{max-width:680px;margin:0 auto}
+.header h1{font-size:20px;font-weight:700;color:#0f172a}
+.header p{font-size:13px;color:#64748b;margin-top:2px}
+.container{max-width:680px;margin:0 auto;padding:20px 24px 60px}
+.progress{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.step-dot.active{background:#2563eb;color:#fff}
+.step-dot.inactive{background:#e2e8f0;color:#94a3b8}
+.step-label{font-size:13px}
+.step-label.active{color:#0f172a;font-weight:500}
+.step-label.inactive{color:#94a3b8}
+.step-line{width:32px;height:2px}
+.step-line.active{background:#2563eb}
+.step-line.inactive{background:#e2e8f0}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px}
+.card+.card{margin-top:16px}
+label.field-label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px}
+label .hint{font-weight:400;color:#9ca3af}
+input[type="text"],select,textarea{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:8px 12px;font-size:14px;font-family:inherit;color:#1e293b;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+textarea{resize:vertical}
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:600px){.grid2,.grid3{grid-template-columns:1fr}}
+.radio-group{display:flex;flex-direction:column;gap:8px}
+.radio-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .15s}
+.radio-option:hover{background:#f8fafc}
+.radio-option.selected{border-color:#2563eb;background:#eff6ff}
+.radio-option input{margin:0}
+.radio-option span{font-size:14px;color:#1e293b}
+.btn-row{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.btn-row.between{justify-content:space-between}
+.btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover:not(:disabled){background:#1d4ed8}
+.btn-secondary{background:#fff;border:1px solid #d1d5db;color:#374151}
+.btn-secondary:hover:not(:disabled){background:#f9fafb}
+.btn-full{width:100%}
+.alert{border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px}
+.alert-amber{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.alert-amber strong{color:#78350f}
+.alert-blue{background:#eff6ff;border:1px solid #bfdbfe}
+.alert-blue h3{font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:6px}
+.alert-blue label{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#1e40af;cursor:pointer;margin-bottom:4px}
+.alert-blue input[type="checkbox"]{margin-top:2px}
+.draft-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;font-family:Georgia,serif;font-size:14px;line-height:1.7;color:#1e293b;white-space:pre-wrap;max-height:600px;overflow-y:auto}
+.prompt-box{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:20px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#14532d;white-space:pre-wrap;max-height:500px;overflow-y:auto}
+.copy-row{margin-top:16px;display:flex;gap:8px;align-items:center}
+.copied-msg{font-size:13px;color:#16a34a;font-weight:500}
+.section-title{font-size:15px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.section-desc{font-size:12px;color:#64748b;margin-bottom:16px}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;margin-right:4px}
+.tag-audience{background:#eff6ff;color:#1d4ed8}
+.tag-type{background:#fef3c7;color:#92400e}
+.hidden{display:none}
+.loading{text-align:center;padding:40px 0}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid #bfdbfe;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.instructions-banner{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:13px;color:#0c4a6e;line-height:1.6}
+.instructions-banner strong{color:#075985}
+.instructions-banner ol{margin:8px 0 0 18px}
+.instructions-banner li{margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>KIPP NJ Crisis Communications Drafter</h1>
+    <p>Coverage period: 3/6 – 7/20 · MDO/MDSO leads on drafting</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Progress -->
+  <div class="progress" id="progress"></div>
+
+  <!-- Steps render here -->
+  <div id="app"></div>
+</div>
+
+<script>
+const INCIDENT_TYPES = [
+  "Student weapon (BB gun, knife, etc.)",
+  "Inappropriate video/content circulated",
+  "Student threat (verbal or written)",
+  "Physical altercation / fight",
+  "Lockdown or shelter-in-place",
+  "Student medical emergency",
+  "Building/facility issue",
+  "Other"
+];
+const AUDIENCES = [
+  "Families at one school",
+  "Families at multiple schools",
+  "Staff at one school",
+  "Staff across the region",
+  "Families & staff at one school",
+  "Families & staff across the region",
+  "Specific class/grade families"
+];
+
+let state = {
+  step: 0,
+  incidentType: "",
+  audience: "",
+  schoolName: "",
+  senderName: "",
+  senderTitle: "",
+  senderEmail: "",
+  date: "",
+  whatHappened: "",
+  actionsTaken: "",
+  currentStatus: "",
+  nextSteps: "",
+  additionalContext: "",
+  copied: false
+};
+
+function isRegionWide() {
+  return state.audience.toLowerCase().includes("region") || state.audience.toLowerCase().includes("multiple");
+}
+function isStaffComm() {
+  return state.audience.toLowerCase().includes("staff") && !state.audience.toLowerCase().includes("families");
+}
+function getEscalationFlags() {
+  const flags = [];
+  const t = state.incidentType.toLowerCase();
+  const d = (state.whatHappened + " " + state.additionalContext).toLowerCase();
+  if (d.includes("social media") || d.includes("video") || d.includes("circulating") || d.includes("tiktok") || d.includes("instagram"))
+    flags.push("Social media involvement detected — consider looping in Maria-Cristina for monitoring");
+  if (t.includes("weapon") || d.includes("weapon") || d.includes("gun") || d.includes("knife") || d.includes("bb gun"))
+    flags.push("Weapon involvement — consider looping in Maria-Cristina");
+  if (t.includes("building") || d.includes("closes school") || d.includes("building issue") || d.includes("evacuation"))
+    flags.push("Serious campus impact — consider looping in Maria-Cristina");
+  if (d.includes("escalat") || d.includes("media") || d.includes("news") || d.includes("police"))
+    flags.push("Potential for escalation — consider looping in Maria-Cristina");
+  return [...new Set(flags)];
+}
+
+function buildPrompt() {
+  const staffNote = isStaffComm()
+    ? "This message is for STAFF (not families). Use a collegial, direct tone. Staff can receive slightly more operational detail than families, but still avoid student-identifying information."
+    : "This message is for FAMILIES. Use a warm, partnership-oriented tone. Keep details high-level and family-friendly.";
+  const scopeNote = isRegionWide()
+    ? "This message is going to the ENTIRE REGION (multiple schools), so keep school-specific details appropriately general."
+    : state.schoolName ? `This message is for ${state.schoolName} specifically.` : "";
+
+  return `You are a crisis communications partner for KIPP NJ public schools. Write a clear, calm, empathetic message following these guidelines:
+
+VOICE AND TONE:
+- Professional but warm
+- Family- and student-centered
+- Focused on safety, transparency, and partnership
+- Calm and non-alarmist
+- Avoid speculation, legal jargon, or too much institutional distance
+
+${staffNote}
+${scopeNote}
+
+MESSAGE STRUCTURE:
+1. What happened and when (brief, factual, high-level)
+2. Confirm everyone is safe
+3. What actions were taken (e.g., followed safety protocols, contacted authorities)
+4. Current status/resolution
+5. Reassurance + values (acknowledge concern, reaffirm commitment to safety and transparency)
+6. Next steps or contact info
+7. Close with partnership language
+
+IMPORTANT RULES:
+- Keep explanations high-level — no student-identifying information
+- Reference consequences in general terms: "We are addressing the matter in alignment with our school policies"
+- Keep it under 300 words unless more detail is required
+- Start with a subject line
+- No markdown formatting — plain text with paragraph breaks
+- Use dashes (-) only if bullet points are truly needed for a short list
+- Output ONLY the ready-to-send message, no commentary
+
+DETAILS:
+Incident Type: ${state.incidentType}
+Audience: ${state.audience}
+${state.schoolName ? "School: " + state.schoolName : "Region-wide communication"}
+Date: ${state.date}
+
+What happened: ${state.whatHappened}
+
+Actions taken: ${state.actionsTaken}
+
+Current status: ${state.currentStatus}
+
+Next steps: ${state.nextSteps}
+
+${state.additionalContext ? "Additional context: " + state.additionalContext : ""}
+
+Sign from: ${state.senderName}, ${state.senderTitle}
+${state.senderEmail ? "Contact email: " + state.senderEmail : ""}`;
+}
+
+function renderProgress() {
+  const labels = ["Setup", "Details", "Draft"];
+  const el = document.getElementById("progress");
+  el.innerHTML = labels.map((l, i) => `
+    <div class="step-dot ${state.step >= i ? 'active' : 'inactive'}">${i + 1}</div>
+    <span class="step-label ${state.step >= i ? 'active' : 'inactive'}">${l}</span>
+    ${i < 2 ? `<div class="step-line ${state.step > i ? 'active' : 'inactive'}"></div>` : ''}
+  `).join('');
+}
+
+function render() {
+  renderProgress();
+  const app = document.getElementById("app");
+
+  if (state.step === 0) {
+    app.innerHTML = `
+      <div class="card">
+        <div class="field">
+          <label class="field-label">What type of incident?</label>
+          <select id="incidentType">
+            <option value="">Select…</option>
+            ${INCIDENT_TYPES.map(t => `<option value="${t}" ${state.incidentType === t ? 'selected' : ''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Who is this message for?</label>
+          <div class="radio-group">
+            ${AUDIENCES.map(a => `
+              <label class="radio-option ${state.audience === a ? 'selected' : ''}">
+                <input type="radio" name="audience" value="${a}" ${state.audience === a ? 'checked' : ''}>
+                <span>${a}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="next0" ${!state.incidentType || !state.audience ? 'disabled' : ''}>Continue →</button>
+        </div>
+      </div>`;
+    document.getElementById("incidentType").addEventListener("change", e => { state.incidentType = e.target.value; render(); });
+    document.querySelectorAll('input[name="audience"]').forEach(r => r.addEventListener("change", e => { state.audience = e.target.value; render(); }));
+    const btn = document.getElementById("next0");
+    if (btn) btn.addEventListener("click", () => { state.step = 1; render(); });
+
+  } else if (state.step === 1) {
+    const needsSchool = !isRegionWide();
+    const flags = getEscalationFlags();
+    app.innerHTML = `
+      <div class="card">
+        <div class="${needsSchool ? 'grid2' : ''}">
+          ${needsSchool ? `<div class="field"><label class="field-label">School Name</label><input type="text" id="schoolName" placeholder="e.g. KIPP Newark Collegiate Academy" value="${state.schoolName}"></div>` : ''}
+          <div class="field"><label class="field-label">Date of Incident</label><input type="text" id="date" placeholder="e.g. Monday, March 10" value="${state.date}"></div>
+        </div>
+        <div class="grid3" style="margin-top:16px">
+          <div class="field"><label class="field-label">Your Name</label><input type="text" id="senderName" placeholder="e.g. Jane Smith" value="${state.senderName}"></div>
+          <div class="field"><label class="field-label">Your Title</label><input type="text" id="senderTitle" placeholder="e.g. Head of Schools" value="${state.senderTitle}"></div>
+          <div class="field"><label class="field-label">Your Email <span class="hint">(opt.)</span></label><input type="text" id="senderEmail" placeholder="jsmith@kippnj.org" value="${state.senderEmail}"></div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label class="field-label">What happened? <span class="hint">(brief, factual — no student names)</span></label>
+          <textarea id="whatHappened" rows="3" placeholder="e.g. During arrival, a student brought a BB gun onto campus. Another student reported it to staff immediately.">${state.whatHappened}</textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Actions taken</label>
+          <textarea id="actionsTaken" rows="2" placeholder="e.g. Staff confiscated the item, administration was notified, police were contacted.">${state.actionsTaken}</textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Current status</label>
+          <textarea id="currentStatus" rows="2" placeholder="e.g. The student is not currently in school. There is no active threat.">${state.currentStatus}</textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Next steps <span class="hint">(town halls, assemblies, security changes, etc.)</span></label>
+          <textarea id="nextSteps" rows="2" placeholder="e.g. School-wide assembly tomorrow. Virtual Town Hall Thursday at 6:30pm.">${state.nextSteps}</textarea>
+        </div>
+        <div class="field">
+          <label class="field-label">Additional context <span class="hint">(optional — links, tone notes, etc.)</span></label>
+          <textarea id="additionalContext" rows="2" placeholder="e.g. This is the second incident this month. Tone should be firm but caring.">${state.additionalContext}</textarea>
+        </div>
+        ${flags.length ? `<div class="alert alert-amber"><strong>⚠️ Escalation check:</strong><br>${flags.map(f => '• ' + f).join('<br>')}</div>` : ''}
+        <div class="btn-row between">
+          <button class="btn btn-secondary" id="back1">← Back</button>
+          <button class="btn btn-primary" id="next1" ${!state.whatHappened || !state.senderName || (needsSchool && !state.schoolName) ? 'disabled' : ''}>Generate Prompt →</button>
+        </div>
+      </div>`;
+    // Bind inputs
+    const fields = ['schoolName','date','senderName','senderTitle','senderEmail','whatHappened','actionsTaken','currentStatus','nextSteps','additionalContext'];
+    fields.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) el.addEventListener("input", e => { state[f] = e.target.value; /* update button state */ 
+        const btn = document.getElementById("next1");
+        if(btn) btn.disabled = !state.whatHappened || !state.senderName || (needsSchool && !state.schoolName);
+      });
+    });
+    document.getElementById("back1").addEventListener("click", () => { state.step = 0; render(); });
+    document.getElementById("next1").addEventListener("click", () => { state.step = 2; render(); });
+
+  } else if (state.step === 2) {
+    const flags = getEscalationFlags();
+    const prompt = buildPrompt();
+    const checklist = [
+      "No student names or identifying information included",
+      "Consequences referenced in general terms only",
+      "Facts are accurate and verified",
+      flags.length ? "Checked with Maria-Cristina if escalation warrants it" : null,
+      "Links and dates/times are correct",
+      "Sender name and contact info are correct",
+      isStaffComm() ? "Appropriate level of detail for a staff audience" : null,
+      isRegionWide() ? "Message is appropriately general for region-wide distribution" : null
+    ].filter(Boolean);
+
+    app.innerHTML = `
+      ${flags.length ? `<div class="alert alert-amber"><strong>⚠️ Before sending:</strong> ${flags[0]}</div>` : ''}
+      
+      <div class="instructions-banner">
+        <strong>How to use this prompt:</strong>
+        <ol>
+          <li>Click "Copy Prompt" below to copy the full prompt to your clipboard</li>
+          <li>Open <a href="https://claude.ai" target="_blank" style="color:#0369a1;text-decoration:underline">claude.ai</a> or <a href="https://chatgpt.com" target="_blank" style="color:#0369a1;text-decoration:underline">chatgpt.com</a></li>
+          <li>Paste the prompt and send — you'll get a polished, ready-to-send message</li>
+          <li>Ask follow-ups like "make it shorter" or "add a section about counseling" to refine</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="section-title">Your Prompt</div>
+            <div style="margin-top:4px"><span class="tag tag-type">${state.incidentType}</span><span class="tag tag-audience">${state.audience}</span></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" id="back2">← Edit Details</button>
+          </div>
+        </div>
+        <div class="prompt-box" id="promptBox">${prompt.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="copy-row">
+          <button class="btn btn-primary" id="copyBtn">Copy Prompt</button>
+          <span class="copied-msg hidden" id="copiedMsg">✓ Copied! Now paste into Claude or ChatGPT</span>
+        </div>
+      </div>
+
+      <div class="card alert-blue" style="margin-top:16px">
+        <h3>Before you send the final message — checklist:</h3>
+        ${checklist.map((item, i) => `<label><input type="checkbox"> ${item}</label>`).join('')}
+      </div>
+
+      <button class="btn btn-secondary btn-full" style="margin-top:16px" id="startOver">Start New Communication</button>`;
+
+    document.getElementById("back2").addEventListener("click", () => { state.step = 1; render(); });
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      navigator.clipboard.writeText(prompt).then(() => {
+        document.getElementById("copiedMsg").classList.remove("hidden");
+        document.getElementById("copyBtn").textContent = "✓ Copied!";
+        setTimeout(() => {
+          document.getElementById("copiedMsg").classList.add("hidden");
+          document.getElementById("copyBtn").textContent = "Copy Prompt";
+        }, 3000);
+      });
+    });
+    document.getElementById("startOver").addEventListener("click", () => {
+      const keep = { senderName: state.senderName, senderTitle: state.senderTitle, senderEmail: state.senderEmail };
+      state = { step: 0, incidentType: "", audience: "", schoolName: "", date: "", whatHappened: "", actionsTaken: "", currentStatus: "", nextSteps: "", additionalContext: "", copied: false, ...keep };
+      render();
+    });
+  }
+}
+
+render();
+</script>
+</body>
+</html>
